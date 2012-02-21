@@ -109,7 +109,6 @@ legend{display:block;width:100%;padding:0;margin-bottom:27px;font-size:19.5px;li
 label,input,button,select,textarea{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:18px;}
 label{display:block;margin-bottom:5px;color:#333333;}
 input,textarea,select,.uneditable-input,.uneditable-textarea{display:inline-block;width:210px;height:18px;padding:4px;margin-bottom:9px;font-size:13px;line-height:18px;color:#555555;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}
-.uneditable-textarea{width:auto;height:auto;}
 label input,label textarea,label select{display:block;}
 label input[type="image"],label input[type="checkbox"],label input[type="radio"]{vertical-align:middle;}
 input[type="image"],input[type="checkbox"],input[type="radio"]{width:auto;height:auto;padding:0;margin:3px 0;*margin-top:0;line-height:normal;border:0;cursor:pointer;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;}
@@ -225,7 +224,8 @@ input:focus:required:invalid,textarea:focus:required:invalid,select:focus:requir
 .search-query{padding-left:14px;padding-right:14px;margin-bottom:0;-webkit-border-radius:14px;-moz-border-radius:14px;border-radius:14px;}
 .uneditable-form .uneditable-input,.uneditable-form .uneditable-textarea{cursor:text;}
 .uneditable-form .form-actions{background-color:transparent;}
-.form-search input,.form-inline input,.form-horizontal input,.form-search textarea,.form-inline textarea,.form-horizontal textarea,.form-search select,.form-inline select,.form-horizontal select,.form-search .help-inline,.form-inline .help-inline,.form-horizontal .help-inline,.form-search .uneditable-input,.form-inline .uneditable-input,.form-horizontal .uneditable-input{display:inline-block;margin-bottom:0;}
+.form-search input,.form-inline input,.form-horizontal input,.form-search textarea,.form-inline textarea,.form-horizontal textarea,.form-search select,.form-inline select,.form-horizontal select,.form-search .help-inline,.form-inline .help-inline,.form-horizontal .help-inline{display:inline-block;margin-bottom:0;}
+.form-search .uneditable-input,.form-inline .uneditable-input,.form-horizontal .uneditable-input,.form-search .uneditable-textarea,.form-inline .uneditable-textarea,.form-horizontal .uneditable-textarea{margin-bottom:0;}
 .form-search label,.form-inline label,.form-search .input-append,.form-inline .input-append,.form-search .input-prepend,.form-inline .input-prepend{display:inline-block;}
 .form-search .input-append .add-on,.form-inline .input-prepend .add-on,.form-search .input-append .add-on,.form-inline .input-prepend .add-on{vertical-align:middle;}
 .control-group{margin-bottom:9px;}
@@ -272,6 +272,8 @@ table .span9{float:none;width:684px;margin-left:0;}
 table .span10{float:none;width:764px;margin-left:0;}
 table .span11{float:none;width:844px;margin-left:0;}
 table .span12{float:none;width:924px;margin-left:0;}
+.table-actions{*zoom:1;padding-bottom:20px;}.table-actions:before,.table-actions:after{display:table;content:"";}
+.table-actions:after{clear:both;}
 section+section{margin-top:40px;}
 [class^="icon-"]{display:inline-block;width:14px;height:14px;vertical-align:text-top;background-image:url(../img/glyphicons-halflings.png);background-position:14px 14px;background-repeat:no-repeat;*margin-right:.3em;}[class^="icon-"]:last-child{*margin-left:0;}
 .icon-white{background-image:url(../img/glyphicons-halflings-white.png);}
