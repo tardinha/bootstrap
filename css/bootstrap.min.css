@@ -278,6 +278,7 @@ table .span11{float:none;width:844px;margin-left:0;}
 table .span12{float:none;width:924px;margin-left:0;}
 .table-actions{*zoom:1;padding-bottom:20px;}.table-actions:before,.table-actions:after{display:table;content:"";}
 .table-actions:after{clear:both;}
+th.row-actions,td.row-actions{width:1px;white-space:nowrap;}
 section+section{margin-top:40px;}
 [class^="icon-"]{display:inline-block;width:14px;height:14px;vertical-align:text-top;background-image:url(../img/glyphicons-halflings.png);background-position:14px 14px;background-repeat:no-repeat;*margin-right:.3em;}[class^="icon-"]:last-child{*margin-left:0;}
 .icon-white{background-image:url(../img/glyphicons-halflings-white.png);}

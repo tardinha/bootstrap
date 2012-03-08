@@ -1342,6 +1342,10 @@ table .span12 {
 .table-actions:after {
   clear: both;
 }
+th.row-actions, td.row-actions {
+  width: 1px;
+  white-space: nowrap;
+}
 section + section {
   margin-top: 40px;
 }
