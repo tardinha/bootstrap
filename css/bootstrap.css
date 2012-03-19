@@ -3170,6 +3170,9 @@ body > .page-alert {
   -moz-border-radius: 0 0 4px 4px;
   border-radius: 0 0 4px 4px;
 }
+body > .container.tabbable > .nav-tabs {
+  padding-top: 15px;
+}
 .tabs-below > .nav-tabs {
   border-top: 1px solid #ddd;
 }

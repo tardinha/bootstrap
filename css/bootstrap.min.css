@@ -530,6 +530,7 @@ body>.page-alert{position:fixed;}
 .tab-content>.tab-pane,.pill-content>.pill-pane{display:none;}
 .tab-content>.active,.pill-content>.active{display:block;}
 .tabbable-bordered{-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;}.tabbable-bordered>.tab-content{border-width:0 1px 1px 1px;padding:20px 20px 10px 20px;-webkit-border-radius:0 0 4px 4px;-moz-border-radius:0 0 4px 4px;border-radius:0 0 4px 4px;}
+body>.container.tabbable>.nav-tabs{padding-top:15px;}
 .tabs-below>.nav-tabs{border-top:1px solid #ddd;}
 .tabs-below>.nav-tabs>li{margin-top:-1px;margin-bottom:0;}
 .tabs-below>.nav-tabs>li>a{-webkit-border-radius:0 0 4px 4px;-moz-border-radius:0 0 4px 4px;border-radius:0 0 4px 4px;}.tabs-below>.nav-tabs>li>a:hover{border-bottom-color:transparent;border-top-color:#ddd;}
