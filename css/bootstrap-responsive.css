@@ -40,6 +40,9 @@
   display: none;
   visibility: hidden;
 }
+.container-semifluid {
+  max-width: 1170px;
+}
 .visible-phone {
   display: none;
 }
@@ -496,6 +499,19 @@
   }
   body > .page-alert {
     position: static;
+  }
+  .row-desktop.row-fluid {
+    width: 100%;
+  }
+  .row-desktop.row {
+    margin-left: 0;
+  }
+  .row-desktop > [class*="span"],
+  .row-desktop > [class*="span"] {
+    float: none;
+    display: block;
+    width: auto;
+    margin: 0;
   }
 }
 @media (min-width: 980px) {
