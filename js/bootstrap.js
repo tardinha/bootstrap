@@ -1,5 +1,5 @@
 /* ===================================================
- * bootstrap-transition.js v2.0.2
+ * bootstrap-transition.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#transitions
  * ===================================================
  * Copyright 2012 Twitter, Inc.
@@ -18,11 +18,12 @@
  * ========================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
   $(function () {
 
-    "use strict"
+    "use strict"; // jshint ;_;
+
 
     /* CSS TRANSITION SUPPORT (http://www.modernizr.com/)
      * ======================================================= */
@@ -57,8 +58,8 @@
 
   })
 
-}( window.jQuery );/* ==========================================================
- * bootstrap-alert.js v2.0.2
+}(window.jQuery);/* ==========================================================
+ * bootstrap-alert.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#alerts
  * ==========================================================
  * Copyright 2012 Twitter, Inc.
@@ -77,62 +78,57 @@
  * ========================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* ALERT CLASS DEFINITION
   * ====================== */
 
   var dismiss = '[data-dismiss="alert"]'
-    , Alert = function ( el ) {
+    , Alert = function (el) {
         $(el).on('click', dismiss, this.close)
       }
 
-  Alert.prototype = {
+  Alert.prototype.close = function (e) {
+    var $this = $(this)
+      , selector = $this.attr('data-target')
+      , $parent
 
-    constructor: Alert
-
-  , close: function ( e ) {
-      var $this = $(this)
-        , selector = $this.attr('data-target')
-        , $parent
-
-      if (!selector) {
-        selector = $this.attr('href')
-        selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
-      }
-
-      $parent = $(selector)
-
-      e && e.preventDefault()
-
-      $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
-
-      $parent.trigger(e = $.Event('close'))
-
-      if (e.isDefaultPrevented()) return
-
-      $parent.removeClass('in')
-
-      function removeElement() {
-        $parent
-          .trigger('closed')
-          .remove()
-      }
-
-      $.support.transition && $parent.hasClass('fade') ?
-        $parent.on($.support.transition.end, removeElement) :
-        removeElement()
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
     }
 
+    $parent = $(selector)
+
+    e && e.preventDefault()
+
+    $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
+
+    $parent.trigger(e = $.Event('close'))
+
+    if (e.isDefaultPrevented()) return
+
+    $parent.removeClass('in')
+
+    function removeElement() {
+      $parent
+        .trigger('closed')
+        .remove()
+    }
+
+    $.support.transition && $parent.hasClass('fade') ?
+      $parent.on($.support.transition.end, removeElement) :
+      removeElement()
   }
 
 
  /* ALERT PLUGIN DEFINITION
   * ======================= */
 
-  $.fn.alert = function ( option ) {
+  $.fn.alert = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('alert')
@@ -151,8 +147,8 @@
     $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
   })
 
-}( window.jQuery );/* ============================================================
- * bootstrap-button.js v2.0.2
+}(window.jQuery);/* ============================================================
+ * bootstrap-button.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#buttons
  * ============================================================
  * Copyright 2012 Twitter, Inc.
@@ -171,58 +167,53 @@
  * ============================================================ */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* BUTTON PUBLIC CLASS DEFINITION
   * ============================== */
 
-  var Button = function ( element, options ) {
+  var Button = function (element, options) {
     this.$element = $(element)
     this.options = $.extend({}, $.fn.button.defaults, options)
   }
 
-  Button.prototype = {
+  Button.prototype.setState = function (state) {
+    var d = 'disabled'
+      , $el = this.$element
+      , data = $el.data()
+      , val = $el.is('input') ? 'val' : 'html'
 
-      constructor: Button
+    state = state + 'Text'
+    data.resetText || $el.data('resetText', $el[val]())
 
-    , setState: function ( state ) {
-        var d = 'disabled'
-          , $el = this.$element
-          , data = $el.data()
-          , val = $el.is('input') ? 'val' : 'html'
+    $el[val](data[state] || this.options[state])
 
-        state = state + 'Text'
-        data.resetText || $el.data('resetText', $el[val]())
+    // push to event loop to allow forms to submit
+    setTimeout(function () {
+      state == 'loadingText' ?
+        $el.addClass(d).attr(d, d) :
+        $el.removeClass(d).removeAttr(d)
+    }, 0)
+  }
 
-        $el[val](data[state] || this.options[state])
+  Button.prototype.toggle = function () {
+    var $parent = this.$element.parent('[data-toggle="buttons-radio"]')
 
-        // push to event loop to allow forms to submit
-        setTimeout(function () {
-          state == 'loadingText' ?
-            $el.addClass(d).attr(d, d) :
-            $el.removeClass(d).removeAttr(d)
-        }, 0)
-      }
+    $parent && $parent
+      .find('.active')
+      .removeClass('active')
 
-    , toggle: function () {
-        var $parent = this.$element.parent('[data-toggle="buttons-radio"]')
-
-        $parent && $parent
-          .find('.active')
-          .removeClass('active')
-
-        this.$element.toggleClass('active')
-      }
-
+    this.$element.toggleClass('active')
   }
 
 
  /* BUTTON PLUGIN DEFINITION
   * ======================== */
 
-  $.fn.button = function ( option ) {
+  $.fn.button = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('button')
@@ -251,8 +242,8 @@
     })
   })
 
-}( window.jQuery );/* ==========================================================
- * bootstrap-carousel.js v2.0.2
+}(window.jQuery);/* ==========================================================
+ * bootstrap-carousel.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#carousel
  * ==========================================================
  * Copyright 2012 Twitter, Inc.
@@ -271,9 +262,10 @@
  * ========================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* CAROUSEL CLASS DEFINITION
   * ========================= */
@@ -289,8 +281,10 @@
 
   Carousel.prototype = {
 
-    cycle: function () {
+    cycle: function (e) {
+      if (!e) this.paused = false
       this.options.interval
+        && !this.paused
         && (this.interval = setInterval($.proxy(this.next, this), this.options.interval))
       return this
     }
@@ -316,7 +310,8 @@
       return this.slide(pos > activePos ? 'next' : 'prev', $(children[pos]))
     }
 
-  , pause: function () {
+  , pause: function (e) {
+      if (!e) this.paused = true
       clearInterval(this.interval)
       this.interval = null
       return this
@@ -382,7 +377,7 @@
  /* CAROUSEL PLUGIN DEFINITION
   * ========================== */
 
-  $.fn.carousel = function ( option ) {
+  $.fn.carousel = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('carousel')
@@ -415,8 +410,8 @@
     })
   })
 
-}( window.jQuery );/* =============================================================
- * bootstrap-collapse.js v2.0.2
+}(window.jQuery);/* =============================================================
+ * bootstrap-collapse.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#collapse
  * =============================================================
  * Copyright 2012 Twitter, Inc.
@@ -435,16 +430,20 @@
  * ============================================================ */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
 
-  var Collapse = function ( element, options ) {
-  	this.$element = $(element)
+
+ /* COLLAPSE PUBLIC CLASS DEFINITION
+  * ================================ */
+
+  var Collapse = function (element, options) {
+    this.$element = $(element)
     this.options = $.extend({}, $.fn.collapse.defaults, options)
 
-    if (this.options["parent"]) {
-      this.$parent = $(this.options["parent"])
+    if (this.options.parent) {
+      this.$parent = $(this.options.parent)
     }
 
     this.options.toggle && this.toggle()
@@ -470,10 +469,10 @@
       dimension = this.dimension()
       scroll = $.camelCase(['scroll', dimension].join('-'))
       actives = this.$parent && this.$parent.find('> .accordion-group > .in')
-      hasData
 
       if (actives && actives.length) {
         hasData = actives.data('collapse')
+        if (hasData && hasData.transitioning) return
         actives.collapse('hide')
         hasData || actives.data('collapse', null)
       }
@@ -492,7 +491,7 @@
       this.$element[dimension](0)
     }
 
-  , reset: function ( size ) {
+  , reset: function (size) {
       var dimension = this.dimension()
 
       this.$element
@@ -500,15 +499,15 @@
         [dimension](size || 'auto')
         [0].offsetWidth
 
-      this.$element[size != null ? 'addClass' : 'removeClass']('collapse')
+      this.$element[size !== null ? 'addClass' : 'removeClass']('collapse')
 
       return this
     }
 
-  , transition: function ( method, startEvent, completeEvent ) {
+  , transition: function (method, startEvent, completeEvent) {
       var that = this
         , complete = function () {
-            if (startEvent == 'show') that.reset()
+            if (startEvent.type == 'show') that.reset()
             that.transitioning = 0
             that.$element.trigger(completeEvent)
           }
@@ -524,18 +523,19 @@
       $.support.transition && this.$element.hasClass('collapse') ?
         this.$element.one($.support.transition.end, complete) :
         complete()
-  	}
+    }
 
   , toggle: function () {
       this[this.$element.hasClass('in') ? 'hide' : 'show']()
-  	}
+    }
 
   }
 
-  /* COLLAPSIBLE PLUGIN DEFINITION
+
+ /* COLLAPSIBLE PLUGIN DEFINITION
   * ============================== */
 
-  $.fn.collapse = function ( option ) {
+  $.fn.collapse = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('collapse')
@@ -566,8 +566,8 @@
     })
   })
 
-}( window.jQuery );/* ============================================================
- * bootstrap-dropdown.js v2.0.2
+}(window.jQuery);/* ============================================================
+ * bootstrap-dropdown.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#dropdowns
  * ============================================================
  * Copyright 2012 Twitter, Inc.
@@ -586,15 +586,16 @@
  * ============================================================ */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* DROPDOWN CLASS DEFINITION
   * ========================= */
 
   var toggle = '[data-toggle="dropdown"]'
-    , Dropdown = function ( element ) {
+    , Dropdown = function (element) {
         var $el = $(element).on('click.dropdown.data-api', this.toggle)
         $('html').on('click.dropdown.data-api', function () {
           $el.parent().removeClass('open')
@@ -605,11 +606,15 @@
 
     constructor: Dropdown
 
-  , toggle: function ( e ) {
+  , toggle: function (e) {
       var $this = $(this)
-        , selector = $this.attr('data-target')
         , $parent
+        , selector
         , isActive
+
+      if ($this.is('.disabled, :disabled')) return
+
+      selector = $this.attr('data-target')
 
       if (!selector) {
         selector = $this.attr('href')
@@ -622,7 +627,8 @@
       isActive = $parent.hasClass('open')
 
       clearMenus()
-      !isActive && $parent.toggleClass('open')
+
+      if (!isActive) $parent.toggleClass('open')
 
       return false
     }
@@ -637,7 +643,7 @@
   /* DROPDOWN PLUGIN DEFINITION
    * ========================== */
 
-  $.fn.dropdown = function ( option ) {
+  $.fn.dropdown = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('dropdown')
@@ -659,8 +665,8 @@
       .on('click.dropdown.data-api', toggle, Dropdown.prototype.toggle)
   })
 
-}( window.jQuery );/* =========================================================
- * bootstrap-modal.js v2.0.2
+}(window.jQuery);/* =========================================================
+ * bootstrap-modal.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#modals
  * =========================================================
  * Copyright 2012 Twitter, Inc.
@@ -679,14 +685,15 @@
  * ========================================================= */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* MODAL CLASS DEFINITION
   * ====================== */
 
-  var Modal = function ( content, options ) {
+  var Modal = function (content, options) {
     this.options = options
     this.$element = $(content)
       .delegate('[data-dismiss="modal"]', 'click.dismiss.modal', $.proxy(this.hide, this))
@@ -716,7 +723,9 @@
         backdrop.call(this, function () {
           var transition = $.support.transition && that.$element.hasClass('fade')
 
-          !that.$element.parent().length && that.$element.appendTo(document.body) //don't move modals dom position
+          if (!that.$element.parent().length) {
+            that.$element.appendTo(document.body) //don't move modals dom position
+          }
 
           that.$element
             .show()
@@ -734,7 +743,7 @@
         })
       }
 
-    , hide: function ( e ) {
+    , hide: function (e) {
         e && e.preventDefault()
 
         var that = this
@@ -777,7 +786,7 @@
     })
   }
 
-  function hideModal( that ) {
+  function hideModal(that) {
     this.$element
       .hide()
       .trigger('hidden')
@@ -785,7 +794,7 @@
     backdrop.call(this)
   }
 
-  function backdrop( callback ) {
+  function backdrop(callback) {
     var that = this
       , animate = this.$element.hasClass('fade') ? 'fade' : ''
 
@@ -839,7 +848,7 @@
  /* MODAL PLUGIN DEFINITION
   * ======================= */
 
-  $.fn.modal = function ( option ) {
+  $.fn.modal = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('modal')
@@ -873,8 +882,8 @@
     })
   })
 
-}( window.jQuery );/* ===========================================================
- * bootstrap-tooltip.js v2.0.2
+}(window.jQuery);/* ===========================================================
+ * bootstrap-tooltip.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#tooltips
  * Inspired by the original jQuery.tipsy by Jason Frame
  * ===========================================================
@@ -894,14 +903,15 @@
  * ========================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* TOOLTIP PUBLIC CLASS DEFINITION
   * =============================== */
 
-  var Tooltip = function ( element, options ) {
+  var Tooltip = function (element, options) {
     this.init('tooltip', element, options)
   }
 
@@ -909,7 +919,7 @@
 
     constructor: Tooltip
 
-  , init: function ( type, element, options ) {
+  , init: function (type, element, options) {
       var eventIn
         , eventOut
 
@@ -930,7 +940,7 @@
         this.fixTitle()
     }
 
-  , getOptions: function ( options ) {
+  , getOptions: function (options) {
       options = $.extend({}, $.fn[this.type].defaults, options, this.$element.data())
 
       if (options.delay && typeof options.delay == 'number') {
@@ -943,36 +953,28 @@
       return options
     }
 
-  , enter: function ( e ) {
+  , enter: function (e) {
       var self = $(e.currentTarget)[this.type](this._options).data(this.type)
 
-      if (!self.options.delay || !self.options.delay.show) {
-        self.show()
-      } else {
-        clearTimeout(this.timeout)
-        self.hoverState = 'in'
-        this.timeout = setTimeout(function() {
-          if (self.hoverState == 'in') {
-            self.show()
-          }
-        }, self.options.delay.show)
-      }
+      if (!self.options.delay || !self.options.delay.show) return self.show()
+
+      clearTimeout(this.timeout)
+      self.hoverState = 'in'
+      this.timeout = setTimeout(function() {
+        if (self.hoverState == 'in') self.show()
+      }, self.options.delay.show)
     }
 
-  , leave: function ( e ) {
+  , leave: function (e) {
       var self = $(e.currentTarget)[this.type](this._options).data(this.type)
 
-      if (!self.options.delay || !self.options.delay.hide) {
-        self.hide()
-      } else {
-        clearTimeout(this.timeout)
-        self.hoverState = 'out'
-        this.timeout = setTimeout(function() {
-          if (self.hoverState == 'out') {
-            self.hide()
-          }
-        }, self.options.delay.hide)
-      }
+      if (this.timeout) clearTimeout(this.timeout)
+      if (!self.options.delay || !self.options.delay.hide) return self.hide()
+
+      self.hoverState = 'out'
+      this.timeout = setTimeout(function() {
+        if (self.hoverState == 'out') self.hide()
+      }, self.options.delay.hide)
     }
 
   , show: function () {
@@ -1030,7 +1032,7 @@
       }
     }
 
-  , isHTML: function( text ) {
+  , isHTML: function(text) {
       // html string detection logic adapted from jQuery
       return typeof text != 'string'
         || ( text.charAt(0) === "<"
@@ -1146,16 +1148,17 @@
 
   $.fn.tooltip.defaults = {
     animation: true
-  , delay: 0
-  , selector: false
   , placement: 'top'
+  , selector: false
+  , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
   , trigger: 'hover'
   , title: ''
-  , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+  , delay: 0
   }
 
-}( window.jQuery );/* ===========================================================
- * bootstrap-popover.js v2.0.2
+}(window.jQuery);
+/* ===========================================================
+ * bootstrap-popover.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#popovers
  * ===========================================================
  * Copyright 2012 Twitter, Inc.
@@ -1174,13 +1177,18 @@
  * =========================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
- "use strict"
+  "use strict"; // jshint ;_;
+
+
+ /* POPOVER PUBLIC CLASS DEFINITION
+  * =============================== */
 
   var Popover = function ( element, options ) {
     this.init('popover', element, options)
   }
+
 
   /* NOTE: POPOVER EXTENDS BOOTSTRAP-TOOLTIP.js
      ========================================== */
@@ -1215,7 +1223,7 @@
       return content
     }
 
-  , tip: function() {
+  , tip: function () {
       if (!this.$tip) {
         this.$tip = $(this.options.template)
       }
@@ -1228,7 +1236,7 @@
  /* POPOVER PLUGIN DEFINITION
   * ======================= */
 
-  $.fn.popover = function ( option ) {
+  $.fn.popover = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('popover')
@@ -1246,8 +1254,8 @@
   , template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
   })
 
-}( window.jQuery );/* =============================================================
- * bootstrap-scrollspy.js v2.0.2
+}(window.jQuery);/* =============================================================
+ * bootstrap-scrollspy.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#scrollspy
  * =============================================================
  * Copyright 2012 Twitter, Inc.
@@ -1266,9 +1274,10 @@
  * ============================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
   /* SCROLLSPY CLASS DEFINITION
    * ========================== */
@@ -1282,7 +1291,7 @@
     this.selector = (this.options.target
       || ((href = $(element).attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
       || '') + ' .nav li > a'
-    this.$body = $('body').on('click.scroll.data-api', this.selector, process)
+    this.$body = $('body')
     this.refresh()
     this.process()
   }
@@ -1301,7 +1310,8 @@
         $targets = this.$body
           .find(this.selector)
           .map(function () {
-            var href = $(this).attr('href')
+            var $el = $(this)
+              , href = $el.data('target') || $el.attr('href')
               , $href = /^#\w/.test(href) && $(href)
             return ( $href
               && href.length
@@ -1338,19 +1348,23 @@
 
     , activate: function (target) {
         var active
+          , selector
 
         this.activeTarget = target
 
-        this.$body
-          .find(this.selector).parent('.active')
+        $(this.selector)
+          .parent('.active')
           .removeClass('active')
 
-        active = this.$body
-          .find(this.selector + '[href="' + target + '"]')
+        selector = this.selector
+          + '[data-target="' + target + '"],'
+          + this.selector + '[href="' + target + '"]'
+
+        active = $(selector)
           .parent('li')
           .addClass('active')
 
-        if ( active.parent('.dropdown-menu') )  {
+        if (active.parent('.dropdown-menu'))  {
           active = active.closest('li.dropdown').addClass('active')
         }
 
@@ -1390,8 +1404,8 @@
     })
   })
 
-}( window.jQuery );/* ========================================================
- * bootstrap-tab.js v2.0.2
+}(window.jQuery);/* ========================================================
+ * bootstrap-tab.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#tabs
  * ========================================================
  * Copyright 2012 Twitter, Inc.
@@ -1410,9 +1424,10 @@
  * ======================================================== */
 
 
-!function ( $ ) {
+!function ($) {
 
-  "use strict"
+  "use strict"; // jshint ;_;
+
 
  /* TAB CLASS DEFINITION
   * ==================== */
@@ -1523,8 +1538,8 @@
     })
   })
 
-}( window.jQuery );/* =============================================================
- * bootstrap-typeahead.js v2.0.2
+}(window.jQuery);/* =============================================================
+ * bootstrap-typeahead.js v2.0.4
  * http://twitter.github.com/bootstrap/javascript.html#typeahead
  * =============================================================
  * Copyright 2012 Twitter, Inc.
@@ -1543,21 +1558,24 @@
  * ============================================================ */
 
 
-!function( $ ){
+!function($){
 
-  "use strict"
+  "use strict"; // jshint ;_;
 
-  var Typeahead = function ( element, options ) {
+
+ /* TYPEAHEAD PUBLIC CLASS DEFINITION
+  * ================================= */
+
+  var Typeahead = function (element, options) {
     this.$element = $(element)
     this.options = $.extend({}, $.fn.typeahead.defaults, options)
     this.matcher = this.options.matcher || this.matcher
     this.sorter = this.options.sorter || this.sorter
     this.highlighter = this.options.highlighter || this.highlighter
+    this.updater = this.options.updater || this.updater
     this.$menu = $(this.options.menu).appendTo('body')
     this.source = this.options.source
     this.shown = false
-
-    if (element.nodeName == 'SELECT') this.replaceSelect()
     this.listen()
   }
 
@@ -1565,54 +1583,16 @@
 
     constructor: Typeahead
 
-  , replaceSelect: function () {
-      this.$original = this.$element
-      this.$element = $('<input type="text" />')
-      
-      this.source = []
-      this.values = {}
-      
-      var options = this.$original.find('option')
-      var $option;
-      for (var i=0; i<options.length; i++) {
-        $option = $(options[i]);
-        if ($option.val() == '') {
-            this.$element.attr('placeholder', $option.html());
-            continue;
-        }
-        
-        this.source.push($option.html())
-        this.values[$option.html()] = $option.val()
-        if (this.$original.val() == $option.val()) this.$element.val($option.html())
-      }
-      
-      var attr = this.$original[0].attributes
-      for (i=0; i<attr.length; i++) {
-        if (attr[i].nodeName != 'type' && attr[i].nodeName != 'name' && attr[i].nodeName != 'id' && attr[i].nodeName != 'data-provide' && !attr[i].nodeName.match(/^on/)) {
-          this.$element.attr(attr[i].nodeName, attr[i].nodeValue)
-        }
-      }
-
-      this.$element.insertAfter(this.$original)
-      this.$original.hide()
-  }
-  
-  , destroyReplacement: function () {
-     // Detroy replacement element, so it doesn't mess up the browsers autofill on refresh
-     if (typeof this.$original != 'undefined') {
-         this.$element.replaceWith('');
-     }
-  }
-
   , select: function () {
       var val = this.$menu.find('.active').attr('data-value')
       this.$element
-        .val(val)
-        .change()
-      if (typeof this.$original != 'undefined') this.$original
-        .val(this.values[val])
+        .val(this.updater(val))
         .change()
       return this.hide()
+    }
+
+  , updater: function (item) {
+      return item
     }
 
   , show: function () {
@@ -1680,7 +1660,7 @@
     }
 
   , highlighter: function (item) {
-      var query = this.query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+      var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
       return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
         return '<strong>' + match + '</strong>'
       })
@@ -1735,8 +1715,6 @@
       this.$menu
         .on('click', $.proxy(this.click, this))
         .on('mouseenter', 'li', $.proxy(this.mouseenter, this))
-      
-      $(window).on('unload', $.proxy(this.destroyReplacement, this));
     }
 
   , keyup: function (e) {
@@ -1775,11 +1753,13 @@
           break
 
         case 38: // up arrow
+          if (e.type != 'keydown') break
           e.preventDefault()
           this.prev()
           break
 
         case 40: // down arrow
+          if (e.type != 'keydown') break
           e.preventDefault()
           this.next()
           break
@@ -1789,17 +1769,6 @@
     }
 
   , blur: function (e) {
-      if (typeof this.$original != 'undefined') {
-        if (this.$element.val() == '') {
-          this.$original.val('')
-        } else if (this.$original.val() == '') {
-          this.$element.val('')
-        } else if (this.values[this.$element.val()] != this.$original.val()) {
-          this.$original.val('')
-          this.$element.val('')
-        }
-      }
-      
       var that = this
       setTimeout(function () { that.hide() }, 150)
     }
@@ -1821,7 +1790,7 @@
   /* TYPEAHEAD PLUGIN DEFINITION
    * =========================== */
 
-  $.fn.typeahead = function ( option ) {
+  $.fn.typeahead = function (option) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('typeahead')
@@ -1845,286 +1814,22 @@
   * ================== */
 
   $(function () {
-    $('[data-provide="typeahead"]').each(function () {
+    $('body').on('focus.typeahead.data-api', '[data-provide="typeahead"]', function (e) {
       var $this = $(this)
       if ($this.data('typeahead')) return
+      e.preventDefault()
       $this.typeahead($this.data())
     })
   })
 
-}( window.jQuery );/*
-	Masked Input plugin for jQuery
-	Copyright (c) 2007-2011 Josh Bush (digitalbush.com)
-	Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license) 
-	Version: 1.3
-
-    @todo: rewrite to proper bootstrap plugin
-*/
-;(function($) {
-	var pasteEventName = ($.browser.msie ? 'paste' : 'input') + ".mask";
-	var iPhone = (window.orientation != undefined);
-
-	$.mask = {
-		//Predefined character definitions
-		definitions: {
-			'9': "[0-9]",
-			'a': "[A-Za-z]",
-			'*': "[A-Za-z0-9]"
-		},
-		dataName:"rawMaskFn"
-	};
-
-	$.fn.extend({
-		//Helper Function for Caret positioning
-		caret: function(begin, end) {
-			if (this.length == 0) return;
-			if (typeof begin == 'number') {
-				end = (typeof end == 'number') ? end : begin;
-				return this.each(function() {
-					if (this.setSelectionRange) {
-						this.setSelectionRange(begin, end);
-					} else if (this.createTextRange) {
-						var range = this.createTextRange();
-						range.collapse(true);
-						range.moveEnd('character', end);
-						range.moveStart('character', begin);
-						range.select();
-					}
-				});
-			} else {
-				if (this[0].setSelectionRange) {
-					begin = this[0].selectionStart;
-					end = this[0].selectionEnd;
-				} else if (document.selection && document.selection.createRange) {
-					var range = document.selection.createRange();
-					begin = 0 - range.duplicate().moveStart('character', -100000);
-					end = begin + range.text.length;
-				}
-				return { begin: begin, end: end };
-			}
-		},
-		unmask: function() { return this.trigger("unmask"); },
-		inputmask: function(mask, settings) {
-			if (!mask && this.length > 0) {
-				var input = $(this[0]);
-				return input.data($.mask.dataName)();
-			}
-			settings = $.extend({
-				placeholder: "_",
-				completed: null
-			}, settings);
-
-			var defs = $.mask.definitions;
-			var tests = [];
-			var partialPosition = mask.length;
-			var firstNonMaskPos = null;
-			var len = mask.length;
-
-			$.each(mask.split(""), function(i, c) {
-				if (c == '?') {
-					len--;
-					partialPosition = i;
-				} else if (defs[c]) {
-					tests.push(new RegExp(defs[c]));
-					if(firstNonMaskPos==null)
-						firstNonMaskPos =  tests.length - 1;
-				} else {
-					tests.push(null);
-				}
-			});
-
-			return this.trigger("unmask").each(function() {
-				var input = $(this);
-				var buffer = $.map(mask.split(""), function(c, i) { if (c != '?') return defs[c] ? settings.placeholder : c });
-				var focusText = input.val();
-
-				function seekNext(pos) {
-					while (++pos <= len && !tests[pos]);
-					return pos;
-				};
-				function seekPrev(pos) {
-					while (--pos >= 0 && !tests[pos]);
-					return pos;
-				};
-
-				function shiftL(begin,end) {
-					if(begin<0)
-					   return;
-					for (var i = begin,j = seekNext(end); i < len; i++) {
-						if (tests[i]) {
-							if (j < len && tests[i].test(buffer[j])) {
-								buffer[i] = buffer[j];
-								buffer[j] = settings.placeholder;
-							} else
-								break;
-							j = seekNext(j);
-						}
-					}
-					writeBuffer();
-					input.caret(Math.max(firstNonMaskPos, begin));
-				};
-
-				function shiftR(pos) {
-					for (var i = pos, c = settings.placeholder; i < len; i++) {
-						if (tests[i]) {
-							var j = seekNext(i);
-							var t = buffer[i];
-							buffer[i] = c;
-							if (j < len && tests[j].test(t))
-								c = t;
-							else
-								break;
-						}
-					}
-				};
-
-				function keydownEvent(e) {
-					var k=e.which;
-
-					//backspace, delete, and escape get special treatment
-					if(k == 8 || k == 46 || (iPhone && k == 127)){
-						var pos = input.caret(),
-							begin = pos.begin,
-							end = pos.end;
-						
-						if(end-begin==0){
-							begin=k!=46?seekPrev(begin):(end=seekNext(begin-1));
-							end=k==46?seekNext(end):end;
-						}
-						clearBuffer(begin, end);
-						shiftL(begin,end-1);
-
-						return false;
-					} else if (k == 27) {//escape
-						input.val(focusText);
-						input.caret(0, checkVal());
-						return false;
-					}
-				};
-
-				function keypressEvent(e) {
-					var k = e.which,
-						pos = input.caret();
-					if (e.ctrlKey || e.altKey || e.metaKey || k<32) {//Ignore
-						return true;
-					} else if (k) {
-						if(pos.end-pos.begin!=0){
-							clearBuffer(pos.begin, pos.end);
-							shiftL(pos.begin, pos.end-1);
-						}
-
-						var p = seekNext(pos.begin - 1);
-						if (p < len) {
-							var c = String.fromCharCode(k);
-							if (tests[p].test(c)) {
-								shiftR(p);
-								buffer[p] = c;
-								writeBuffer();
-								var next = seekNext(p);
-								input.caret(next);
-								if (settings.completed && next >= len)
-									settings.completed.call(input);
-							}
-						}
-						return false;
-					}
-				};
-
-				function clearBuffer(start, end) {
-					for (var i = start; i < end && i < len; i++) {
-						if (tests[i])
-							buffer[i] = settings.placeholder;
-					}
-				};
-
-				function writeBuffer() { return input.val(buffer.join('')).val(); };
-
-				function checkVal(allow) {
-					//try to place characters where they belong
-					var test = input.val();
-					var lastMatch = -1;
-					for (var i = 0, pos = 0; i < len; i++) {
-						if (tests[i]) {
-							buffer[i] = settings.placeholder;
-							while (pos++ < test.length) {
-								var c = test.charAt(pos - 1);
-								if (tests[i].test(c)) {
-									buffer[i] = c;
-									lastMatch = i;
-									break;
-								}
-							}
-							if (pos > test.length)
-								break;
-						} else if (buffer[i] == test.charAt(pos) && i!=partialPosition) {
-							pos++;
-							lastMatch = i;
-						}
-					}
-					if (!allow && lastMatch + 1 < partialPosition) {
-						input.val("");
-						clearBuffer(0, len);
-					} else if (allow || lastMatch + 1 >= partialPosition) {
-						writeBuffer();
-						if (!allow) input.val(input.val().substring(0, lastMatch + 1));
-					}
-					return (partialPosition ? i : firstNonMaskPos);
-				};
-
-				input.data($.mask.dataName,function(){
-					return $.map(buffer, function(c, i) {
-						return tests[i]&&c!=settings.placeholder ? c : null;
-					}).join('');
-				})
-
-				if (!input.attr("readonly"))
-					input
-					.one("unmask", function() {
-						input
-							.unbind(".mask")
-							.removeData($.mask.dataName);
-					})
-					.bind("focus.mask", function() {
-						focusText = input.val();
-						var pos = checkVal();
-						writeBuffer();
-						var moveCaret=function(){
-							if (pos == mask.length)
-								input.caret(0, pos);
-							else
-								input.caret(pos);
-						};
-						($.browser.msie ? moveCaret:function(){setTimeout(moveCaret,0)})();
-					})
-					.bind("blur.mask", function() {
-						checkVal();
-						if (input.val() != focusText)
-							input.change();
-					})
-					.bind("keydown.mask", keydownEvent)
-					.bind("keypress.mask", keypressEvent)
-					.bind(pasteEventName, function() {
-						setTimeout(function() { input.caret(checkVal(true)); }, 0);
-					});
-
-				checkVal(); //Perform initial check for existing values
-			});
-		}
-	});
-})(jQuery);
-
-$(function() {
-    $('input[data-inputmask]').each(function () { $(this).inputmask($(this).attr('data-inputmask')) } )
-})
-/* ==========================================================
- * bootstrap-carousel.js v2.0.0
- * http://twitter.github.com/bootstrap/javascript.html#carousel
- * 
- * Based on work by Daniel Stocks (http://webcloud.se)
- * ==========================================================
- * Copyright 2012 Twitter, Inc.
+}(window.jQuery);/* ===========================================================
+ * bootstrap-inputmask.js j1
+ * http://twitter.github.com/bootstrap/javascript.html#tooltips
+ * Based on Masked Input plugin by Josh Bush (digitalbush.com)
+ * ===========================================================
+ * Copyright 2012 Jasny BV, Netherlands.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -2137,129 +1842,351 @@ $(function() {
  * limitations under the License.
  * ========================================================== */
 
-!function ( $ ) {
-  function Placeholder(input) {
-    this.input = input;
-    if (input.attr('type') == 'password') {
-      this.handlePassword();
-    }
-    
-    // Prevent placeholder values from submitting
-    $(input[0].form).submit(function() {
-      if (input.hasClass('placeholder') && input[0].value == input.attr('placeholder')) {
-        input[0].value = '';
-      }
-    });
-  }
-  
-  Placeholder.prototype = {
-    show : function(loading) {
-      // FF and IE saves values when you refresh the page. If the user refreshes the page with
-      // the placeholders showing they will be the default values and the input fields won't be empty.
-      if (this.input[0].value === '' || (loading && this.valueIsPlaceholder())) {
-        if (this.isPassword) {
-          try {
-            this.input[0].setAttribute('type', 'text');
-          } catch (e) {
-            this.input.before(this.fakePassword.show()).hide();
-          }
-        }
-        this.input.addClass('placeholder');
-        this.input[0].value = this.input.attr('placeholder');
-      }
-    }
-    
-  , hide : function() {
-      this.input.removeClass('placeholder');
+!function ($) {
 
-      if (this.input.hasClass('placeholder') && (this.valueIsPlaceholder() || (this.isPassword && $this.input[0].getAttribute('type') != 'password'))) {
-        this.input[0].value = '';
-        if (this.isPassword) {
-          try {
-            this.input[0].setAttribute('type', 'password');
-          } catch (e) { }
-          // Restore focus for Opera and IE
-          this.input.show();
-          this.input[0].focus();
-        }
-      }
-    }
-    
-  , valueIsPlaceholder : function() {
-      return this.input[0].value == this.input.attr('placeholder');
-    }
-    
-  , handlePassword: function() {
-      var input = this.input;
-      input.attr('realType', 'password');
-      this.isPassword = true;
-      // IE < 9 doesn't allow changing the type of password inputs
-      if ($.browser.msie && input[0].outerHTML) {
-        var fakeHTML = $(input[0].outerHTML.replace(/type=(['"])?password\1/gi, 'type=$1text$1'));
-        this.fakePassword = fakeHTML.val(input.attr('placeholder')).addClass('placeholder').focus(function() {
-          input.trigger('focus');
-          $(this).hide();
-        });
-        $(input[0].form).submit(function() {
-          fakeHTML.remove();
-          input.show()
-        });
-      }
-    }
-  };
-  
- /* PLACEHOLDER PLUGIN DEFINITION
-  * ========================== */
+  "use strict"; // jshint ;_;
 
-  var NATIVE_SUPPORT = !!("placeholder" in document.createElement( "input" ));
-  $.fn.placeholder = function() {
-    return NATIVE_SUPPORT ? this : this.each(function() {
-      var input = $(this);
-      var placeholder = new Placeholder(input);
-      placeholder.show(true);
-      input.focus(function() {
-        placeholder.hide();
-      });
-      input.blur(function() {
-        placeholder.show(false);
-      });
+  var isIphone = (window.orientation !== undefined),
+      isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1
 
-      // On page refresh, IE doesn't re-populate user input
-      // until the window.onload event is fired.
-      if ($.browser.msie) {
-        $(window).load(function() {
-          if(input.val()) {
-            input.removeClass("placeholder");
-          }
-          placeholder.show(true);
-        });
-        // What's even worse, the text cursor disappears
-        // when tabbing between text inputs, here's a fix
-        input.focus(function() {
-          if(this.value == "") {
-            var range = this.createTextRange();
-            range.collapse(true);
-            range.moveStart('character', 0);
-            range.select();
-          }
-        });
-      }
-    });
+  $.mask = {
+    //Predefined character definitions
+    definitions: {
+      '9': "[0-9]",
+      'a': "[A-Za-z]",
+      '?': "[A-Za-z0-9]",
+      '*': "."
+    },
+    dataName:"rawMaskFn"
   }
 
- /* PLACEHOLDER DATA-API
-  * ================= */
+
+ /* INPUTMASK PUBLIC CLASS DEFINITION
+  * ================================= */
+
+  var Inputmask = function (element, options) {
+    if (isAndroid) return // No support because caret positioning doesn't work on Android
+    
+    this.$element = $(element)
+    this.mask = options.mask
+    this.options = $.extend({}, $.fn.inputmask.defaults, options)
+    
+    this.init()
+    this.listen()
+        
+    this.checkVal() //Perform initial check for existing values
+  }
+
+  Inputmask.prototype = {
+    
+    init: function() {
+      var defs = $.mask.definitions
+      var len = this.mask.length
+
+      this.tests = [] 
+      this.partialPosition = this.mask.length
+      this.firstNonMaskPos = null
+
+      $.each(this.mask.split(""), $.proxy(function(i, c) {
+        if (c == '?') {
+          len--
+          this.partialPosition = i
+        } else if (defs[c]) {
+          this.tests.push(new RegExp(defs[c]))
+          if(this.firstNonMaskPos === null)
+            this.firstNonMaskPos =  this.tests.length - 1
+        } else {
+          this.tests.push(null)
+        }
+      }, this))
+
+      this.buffer = $.map(this.mask.split(""), $.proxy(function(c, i) {
+        if (c != '?') return defs[c] ? this.options.placeholder : c
+      }, this))
+      
+      this.focusText = this.$element.val()
+
+      this.$element.data($.mask.dataName, $.proxy(function() {
+        return $.map(this.buffer, function(c, i) {
+          return this.tests[i] && c != this.options.placeholder ? c : null
+        }).join('')
+      }, this))
+    },
+    
+    listen: function() {
+      if (this.$element.attr("readonly")) return
+
+      var pasteEventName = ($.browser.msie ? 'paste' : 'input') + ".mask"
+
+      this.$element
+        .on("unmask", $.proxy(this.unmask, this))
+        
+        .on("focus.mask", $.proxy(this.focusEvent, this))
+        .on("blur.mask", $.proxy(this.blurEvent, this))
+        
+        .on("keydown.mask", $.proxy(this.keydownEvent, this))
+        .on("keypress.mask", $.proxy(this.keypressEvent, this))
+
+        .on(pasteEventName, $.proxy(this.pasteEvent, this))
+    },
+
+    //Helper Function for Caret positioning
+    caret: function(begin, end) {
+      if (this.$element.length === 0) return
+      if (typeof begin == 'number') {
+        end = (typeof end == 'number') ? end : begin
+        return this.$element.each(function() {
+          if (this.setSelectionRange) {
+            this.setSelectionRange(begin, end)
+          } else if (this.createTextRange) {
+            var range = this.createTextRange()
+            range.collapse(true)
+            range.moveEnd('character', end)
+            range.moveStart('character', begin)
+            range.select()
+          }
+        })
+      } else {
+        if (this.$element[0].setSelectionRange) {
+          begin = this.$element[0].selectionStart
+          end = this.$element[0].selectionEnd
+        } else if (document.selection && document.selection.createRange) {
+          var range = document.selection.createRange()
+          begin = 0 - range.duplicate().moveStart('character', -100000)
+          end = begin + range.text.length
+        }
+        return {
+          begin: begin, 
+          end: end
+        }
+      }
+    },
+    
+    seekNext: function(pos) {
+      var len = this.mask.length
+      while (++pos <= len && !this.tests[pos]);
+      
+      return pos
+    },
+    
+    seekPrev: function(pos) {
+      while (--pos >= 0 && !this.tests[pos]);
+      
+      return pos
+    },
+
+    shiftL: function(begin,end) {
+      var len = this.mask.length
+      
+      if(begin<0) return
+      
+      for (var i = begin,j = this.seekNext(end); i < len; i++) {
+        if (this.tests[i]) {
+          if (j < len && this.tests[i].test(this.buffer[j])) {
+            this.buffer[i] = this.buffer[j]
+            this.buffer[j] = this.options.placeholder
+          } else
+            break
+          j = this.seekNext(j)
+        }
+      }
+      this.writeBuffer()
+      this.caret(Math.max(this.firstNonMaskPos, begin))
+    },
+
+    shiftR: function(pos) {
+      var len = this.mask.length
+      
+      for (var i = pos, c = this.options.placeholder; i < len; i++) {
+        if (this.tests[i]) {
+          var j = this.seekNext(i)
+          var t = this.buffer[i]
+          this.buffer[i] = c
+          if (j < len && this.tests[j].test(t))
+            c = t
+          else
+            break
+        }
+      }
+    },
+
+    unmask: function() {
+      this.$element
+        .unbind(".mask")
+        .removeData("inputmask")
+    },
+    
+    focusEvent: function() {
+      this.focusText = this.$element.val()
+      var len = this.mask.length 
+      var pos = this.checkVal()
+      this.writeBuffer()
+
+      var that = this
+      var moveCaret = function() {
+        if (pos == len)
+          that.caret(0, pos)
+        else
+          that.caret(pos)
+      }
+
+      if ($.browser.msie)
+        moveCaret()
+      else
+        setTimeout(moveCaret, 0)
+    },
+    
+    blurEvent: function() {
+      this.checkVal()
+      if (this.$element.val() != this.focusText)
+        this.$element.trigger('change')
+    },
+        
+    keydownEvent: function(e) {
+      var k=e.which
+
+      //backspace, delete, and escape get special treatment
+      if (k == 8 || k == 46 || (isIphone && k == 127)) {
+        var pos = this.caret(),
+        begin = pos.begin,
+        end = pos.end
+						
+        if (end-begin === 0) {
+          begin = k!=46 ? this.seekPrev(begin) : (end=this.seekNext(begin-1))
+          end = k==46 ? this.seekNext(end) : end
+        }
+        this.clearBuffer(begin, end)
+        this.shiftL(begin,end-1)
+
+        return false
+      } else if (k == 27) {//escape
+        this.$element.val(this.focusText)
+        this.caret(0, this.checkVal())
+        return false
+      }
+    },
+
+    keypressEvent: function(e) {
+      var len = this.mask.length
+      
+      var k = e.which,
+      pos = this.caret()
+
+      if (e.ctrlKey || e.altKey || e.metaKey || k<32)  {//Ignore
+        return true
+      } else if (k) {
+        if (pos.end - pos.begin !== 0) {
+          this.clearBuffer(pos.begin, pos.end)
+          this.shiftL(pos.begin, pos.end-1)
+        }
+
+        var p = this.seekNext(pos.begin - 1)
+        if (p < len) {
+          var c = String.fromCharCode(k)
+          if (this.tests[p].test(c)) {
+            this.shiftR(p)
+            this.buffer[p] = c
+            this.writeBuffer()
+            var next = this.seekNext(p)
+            this.caret(next)
+          }
+        }
+        return false
+      }
+    },
+
+    pasteEvent: function() {
+      var that = this
+      
+      setTimeout(function() {
+        that.caret(that.checkVal(true))
+      }, 0)
+    },
+    
+    clearBuffer: function(start, end) {
+      var len = this.mask.length
+      
+      for (var i = start; i < end && i < len; i++) {
+        if (this.tests[i])
+          this.buffer[i] = this.options.placeholder
+      }
+    },
+
+    writeBuffer: function() {
+      return this.$element.val(this.buffer.join('')).val()
+    },
+
+    checkVal: function(allow) {
+      var len = this.mask.length
+      //try to place characters where they belong
+      var test = this.$element.val()
+      var lastMatch = -1
+      
+      for (var i = 0, pos = 0; i < len; i++) {
+        if (this.tests[i]) {
+          this.buffer[i] = this.options.placeholder
+          while (pos++ < test.length) {
+            var c = test.charAt(pos - 1)
+            if (this.tests[i].test(c)) {
+              this.buffer[i] = c
+              lastMatch = i
+              break
+            }
+          }
+          if (pos > test.length)
+            break
+        } else if (this.buffer[i] == test.charAt(pos) && i != this.partialPosition) {
+          pos++
+          lastMatch = i
+        }
+      }
+      if (!allow && lastMatch + 1 < this.partialPosition) {
+        this.$element.val("")
+        this.clearBuffer(0, len)
+      } else if (allow || lastMatch + 1 >= this.partialPosition) {
+        this.writeBuffer()
+        if (!allow) this.$element.val(this.$element.val().substring(0, lastMatch + 1))
+      }
+      return (this.partialPosition ? i : this.firstNonMaskPos)
+    }
+  }
+
+  
+ /* INPUTMASK PLUGIN DEFINITION
+  * =========================== */
+
+  $.fn.inputmask = function (options) {
+    return this.each(function () {
+      var $this = $(this)
+      , data = $this.data('inputmask')
+      if (!data) $this.data('inputmask', (data = new Inputmask(this, options)))
+    })
+  }
+
+  $.fn.inputmask.defaults = {
+    placeholder: "_"
+  }
+
+  $.fn.inputmask.Constructor = Inputmask
+
+
+ /* INPUTMASK DATA-API
+  * ================== */
 
   $(function () {
-    $('input[placeholder], textarea[placeholder]').placeholder();
+    $('body').on('focus.inputmask.data-api', '[data-mask]', function (e) {
+      var $this = $(this)
+      if ($this.data('inputmask')) return
+      e.preventDefault()
+      $this.inputmask($this.data())
+    })
   })
 
-}( window.jQuery )
-/* ============================================================
- * bootstrap-rowlink.js v2.0.2
+}(window.jQuery)/* ============================================================
+ * bootstrap-rowlink.js j1
  * http://jasny.github.com/bootstrap/javascript.html#rowlink
  * ============================================================
- * Copyright 2011 Jasny BV, Netherlands.
+ * Copyright 2012 Jasny BV, Netherlands.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2274,35 +2201,65 @@ $(function() {
  * limitations under the License.
  * ============================================================ */
 
-/* TODO: Turn this into a proper jquery plugin */
+!function ($) {
+  
+  "use strict"; // jshint ;_;
 
-$(function () {
-    $('*[data-rowlink]').each(function () {
-        var target = $(this).attr('data-rowlink');
-        
-        (this.nodeName == 'tr' ? $(this) : $(this).find('tr:has(td)')).each(function() {
-            var link = $(this).find(target).first();
-            if (!link.length) return;
-            
-            var href = link.attr('href');
+  var Rowlink = function (element, options) {
+    options = $.extend({}, $.fn.rowlink.defaults, options)
+    var tr = element.nodeName == 'tr' ? $(element) : $(element).find('tr:has(td)')
+    
+    tr.each(function() {
+      var link = $(this).find(options.target).first()
+      if (!link.length) return
+      
+      var href = link.attr('href')
 
-            $(this).find('td').not('.nohref').click(function() {
-                window.location = href;
-            });
+      $(this).find('td').not('.nolink').click(function() {
+        window.location = href;
+      })
 
-            link.replaceWith(link.html());
-        });
-    });
-})
-/* ==========================================================
- * bootstrap-placeholder.js v2.0.0
- * http://jasny.github.com/bootstrap/javascript.html#placeholder
- * 
- * Based on work by Daniel Stocks (http://webcloud.se)
- * ==========================================================
- * Copyright 2012 Jasny BV.
+      $(this).addClass('rowlink')
+      link.replaceWith(link.html())
+    })
+  }
+
+  
+ /* ROWLINK PLUGIN DEFINITION
+  * =========================== */
+
+  $.fn.rowlink = function (options) {
+    return this.each(function () {
+      var $this = $(this)
+      , data = $this.data('rowlink')
+      if (!data) $this.data('rowlink', (data = new Rowlink(this, options)))
+    })
+  }
+
+  $.fn.rowlink.defaults = {
+    target: "a"
+  }
+
+  $.fn.rowlink.Constructor = Rowlink
+
+
+ /* ROWLINK DATA-API
+  * ================== */
+
+  $(function () {
+    $('[data-provides="rowlink"]').each(function () {
+      $(this).rowlink($(this).data())
+    })
+  })
+  
+}(window.jQuery)
+/* ===========================================================
+ * bootstrap-fileupload.js j1a
+ * http://jasny.github.com/bootstrap/javascript.html#fileupload
+ * ===========================================================
+ * Copyright 2012 Jasny BV, Netherlands.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -2315,59 +2272,110 @@ $(function () {
  * limitations under the License.
  * ========================================================== */
 
-/* TODO: turn this into a proper bootstrap plugin */
+!function ($) {
 
-$(function () {
-      $('*[data-fileupload]').each(function () {
-          var container = $(this);
-          var input = $(this).find(':file');
-          var name = input.attr('name');
-          if (input.length == 0) return;
-          
-          var preview = $(this).find('.fileupload-preview');
-          if (preview.css('display') != 'inline' && preview.css('height') != 'none') preview.css('line-height', preview.css('height'));
+  "use strict"; // jshint ;_
 
-          var remove = $(this).find('*[data-dismiss="fileupload"]');
-          
-          var hidden_input = $(this).find(':hidden[name="'+name+'"]');
-          if (!hidden_input.length) {
-              hidden_input = $('<input type="hidden" />');
-              container.prepend(hidden_input);
-          }
+ /* INPUTMASK PUBLIC CLASS DEFINITION
+  * ================================= */
 
-          var type = container.attr('data-fileupload') == "image" ? "image" : "file";
+  var Fileupload = function (element, options) {
+    this.$element = $(element)
+    this.type = this.$element.data('uploadtype') || (this.$element.find('.thumbnail').length > 0 ? "image" : "file")
+      
+    this.$input = this.$element.find(':file')
+    if (this.$input.length === 0) return
 
-          input.change(function(e) {
-              hidden_input.val('');
-              hidden_input.attr('name', '')
-              input.attr('name', name);
+    this.name = this.$input.attr('name') || options.name
 
-              var file = e.target.files[0];
-              
-              if (type == "image" && preview.length && (typeof file.type !== "undefined" ? file.type.match('image.*') : file.name.match('\\.(gif|png|jpg)$')) && typeof FileReader !== "undefined") {
-                  var reader = new FileReader();
+    this.$hidden = this.$element.find(':hidden[name="'+this.name+'"]')
+    if (this.$hidden.length === 0) {
+      this.$hidden = $('<input type="hidden" />')
+      this.$element.prepend(this.$hidden)
+    }
 
-                  reader.onload = function(e) {
-                     preview.html('<img src="' + e.target.result + '" ' + (preview.css('max-height') != 'none' ? 'style="max-height: ' + preview.css('max-height') + ';"' : '') + ' />');
-                     container.addClass('fileupload-exists').removeClass('fileupload-new');
-                  }
+    this.$preview = this.$element.find('.fileupload-preview')
+    var height = this.$preview.css('height')
+    if (this.$preview.css('display') != 'inline' && height != '0px' && height != 'none') this.$preview.css('line-height', height)
 
-                  reader.readAsDataURL(file);
-              } else {
-                  preview.html(escape(file.name));
-                  container.addClass('fileupload-exists').removeClass('fileupload-new');
-              }
-          });
+    this.$remove = this.$element.find('[data-dismiss="fileupload"]')
+    
+    this.listen()
+  }
+  
+  Fileupload.prototype = {
+    
+    listen: function() {
+      this.$input.on('change.fileupload', $.proxy(this.change, this))
+      if (this.$remove) this.$remove.on('click.fileupload', $.proxy(this.clear, this))
+    },
+    
+    change: function(e, invoked) {
+      var file = e.target.files !== undefined ? e.target.files[0] : { name: e.target.value.replace(/^.+\\/, '') }
+      if (!file || invoked === 'clear') return
+      
+      this.$hidden.val('')
+      this.$hidden.attr('name', '')
+      this.$input.attr('name', this.name)
 
-          remove.click(function() {
-              hidden_input.val('');
-              hidden_input.attr('name', name);
-              input.attr('name', '');
+      if (this.type === "image" && this.$preview.length > 0 && (typeof file.type !== "undefined" ? file.type.match('image.*') : file.name.match('\\.(gif|png|jpe?g)$')) && typeof FileReader !== "undefined") {
+        var reader = new FileReader()
+        var preview = this.$preview
+        var element = this.$element
 
-              preview.html('');
-              container.addClass('fileupload-new').removeClass('fileupload-exists');
+        reader.onload = function(e) {
+          preview.html('<img src="' + e.target.result + '" ' + (preview.css('max-height') != 'none' ? 'style="max-height: ' + preview.css('max-height') + ';"' : '') + ' />')
+          element.addClass('fileupload-exists').removeClass('fileupload-new')
+        }
 
-              return false;
-          });
-      })
-});
+        reader.readAsDataURL(file)
+      } else {
+        this.$preview.text(file.name)
+        this.$element.addClass('fileupload-exists').removeClass('fileupload-new')
+      }
+    },
+
+    clear: function(e) {
+      this.$hidden.val('')
+      this.$hidden.attr('name', this.name)
+      this.$input.attr('name', '')
+
+      this.$preview.html('')
+      this.$element.addClass('fileupload-new').removeClass('fileupload-exists')
+
+      this.$input.trigger('change', [ 'clear' ])
+
+      e.preventDefault()
+      return false
+    }
+  }
+
+  
+ /* INPUTMASK PLUGIN DEFINITION
+  * =========================== */
+
+  $.fn.fileupload = function (options) {
+    return this.each(function () {
+      var $this = $(this)
+      , data = $this.data('fileupload')
+      if (!data) $this.data('fileupload', (data = new Fileupload(this, options)))
+    })
+  }
+
+  $.fn.fileupload.Constructor = Fileupload
+
+
+ /* INPUTMASK DATA-API
+  * ================== */
+
+  $(function () {
+    $('body').on('click.fileupload.data-api', '[data-provides="fileupload"]', function (e) {
+      var $this = $(this)
+      if ($this.data('fileupload')) return
+      $this.fileupload($this.data())
+      
+      if ($(e.target).data('dismiss') == 'fileupload') $(e.target).trigger('click.fileupload')
+    })
+  })
+
+}(window.jQuery)
