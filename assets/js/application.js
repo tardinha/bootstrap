@@ -6,9 +6,19 @@
 
   $(function(){
 
+    var $window = $(window)
+
     // Disable certain links in docs
     $('section [href^=#]').click(function (e) {
       e.preventDefault()
+    })
+
+    // side bar
+    $('.bs-docs-sidenav').affix({
+      offset: {
+        top: function () { return $window.width() <= 980 ? 290 : 210 }
+      , bottom: 270
+      }
     })
 
     // make code pretty
@@ -21,56 +31,16 @@
       $(this).parents('.add-on')[method]('active')
     })
 
-    // position static twipsies for components page
-    if ($(".twipsies a").length) {
-      $(window).on('load resize', function () {
-        $(".twipsies a").each(function () {
-          $(this)
-            .tooltip({
-              placement: $(this).attr('title')
-            , trigger: 'manual'
-            })
-            .tooltip('show')
-          })
-      })
-    }
-
     // add tipsies to grid for scaffolding
-    if ($('#grid-system').length) {
-      $('#grid-system').tooltip({
+    if ($('#gridSystem').length) {
+      $('#gridSystem').tooltip({
           selector: '.show-grid > div'
         , title: function () { return $(this).width() + 'px' }
       })
     }
 
-    // fix sub nav on scroll
-    var $win = $(window)
-      , $nav = $('.subnav')
-      , navTop = $('.subnav').length && $('.subnav').offset().top - 40
-      , isFixed = 0
-
-    processScroll()
-
-    // hack sad times - holdover until rewrite for 2.1
-    $nav.on('click', function () {
-      if (!isFixed) setTimeout(function () {  $win.scrollTop($win.scrollTop() - 47) }, 10)
-    })
-
-    $win.on('scroll', processScroll)
-
-    function processScroll() {
-      var i, scrollTop = $win.scrollTop()
-      if (scrollTop >= navTop && !isFixed) {
-        isFixed = 1
-        $nav.addClass('subnav-fixed')
-      } else if (scrollTop <= navTop && isFixed) {
-        isFixed = 0
-        $nav.removeClass('subnav-fixed')
-      }
-    }
-
     // tooltip demo
-    $('.tooltip-demo.well').tooltip({
+    $('.tooltip-demo').tooltip({
       selector: "a[rel=tooltip]"
     })
 
@@ -113,9 +83,29 @@
       inputsPlugin.attr('checked', !inputsPlugin.is(':checked'))
     })
 
+    $('#components.download .toggle-jasny').on('click', function (e) {
+      e.preventDefault()
+      inputsComponent.attr('checked', false)
+      $('#components.download input.jasny').attr('checked', true)
+    })
+
+    $('#plugins.download .toggle-jasny').on('click', function (e) {
+      e.preventDefault()
+      inputsPlugin.attr('checked', false)
+      $('#plugins.download input.jasny').attr('checked', true)
+    })
+
     $('#variables.download .toggle-all').on('click', function (e) {
       e.preventDefault()
       inputsVariables.val('')
+    })
+
+    $('#plugins.download input[value="bootstrap-popover.js"]').on('click', function (e) {
+      if ($(this).is(':checked')) $('#plugins.download input[value="bootstrap-tooltip.js"]').attr('checked', true)
+    })
+
+    $('#plugins.download input[value="bootstrap-tooltip.js"]').on('click', function (e) {
+      if ($(this).is(':not(:checked)')) $('#plugins.download input[value="bootstrap-popover.js"]').attr('checked', false)
     })
 
     // request built javascript
@@ -129,7 +119,25 @@
             .toArray()
         , vars = {}
         , img = ['glyphicons-halflings.png', 'glyphicons-halflings-white.png']
+        , fonts = []
+        , autoselect = {
+            'jasny/modals.less': ['modals.less']
+          , 'jasny/layouts-semifluid.responsive-1200px-min.less': ['jasny/layouts-semifluid.less', 'responsive-1200px-min.less']
+          , 'jasny/forms.responsive-767px-max.less': ['jasny/forms.less', 'responsive-767px-max.less']
+          , 'jasny/forms.responsive-768px-979px.less': ['jasny/forms.less', 'responsive-768px-979px.less']
+          , 'jasny/forms.responsive-1200px-min.less': ['jasny/forms.less', 'responsive-1200px-min.less']
+          , 'jasny/page-alert.responsive-767px-max.less': ['jasny/page-alert.less', 'responsive-767px-max.less']
+          , 'jasny/page-alert.responsive-1200px-min.less': ['jasny/page-alert.less', 'responsive-1200px-min.less']
+        }
+        
+    if ($('#components.download input[value="jasny/iconic.less"]').is(':checked'))
+      fonts = ['iconic_fill.eot', 'iconic_fill.otf', 'iconic_fill.svg', 'iconic_fill.ttf', 'iconic_fill.woff', 'iconic_stroke.eot', 'iconic_stroke.otf', 'iconic_stroke.svg', 'iconic_stroke.ttf', 'iconic_stroke.woff']
 
+    $.map(autoselect, function(deps, file) {
+      if ($.map(deps, function (value) { return $('#components.download input[value="'+value+'"]').is(':checked') ? 1 : null }).length == deps.length)
+        css.push(file)
+    })
+    
     $("#variables.download input")
       .each(function () {
         $(this).val() && (vars[ $(this).prev().text() ] = $(this).val())
@@ -137,13 +145,14 @@
 
       $.ajax({
         type: 'POST'
-      , url: /\?dev/.test(window.location) ? 'http://localhost:3000' : 'http://bootstrap.herokuapp.com'
+      , url: /\?dev|^http:\/\/localhost\//.test(window.location) ? 'http://localhost:3000' : 'http://bootstrap-server.jasny.net'
       , dataType: 'jsonpi'
       , params: {
           js: js
         , css: css
         , vars: vars
         , img: img
+        , fonts: fonts
       }
       })
     })
